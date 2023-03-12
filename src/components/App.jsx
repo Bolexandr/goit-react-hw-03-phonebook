@@ -4,11 +4,10 @@ import { nanoid } from 'nanoid';
 import AddContactForm from './Form';
 import ContactsList from './Contacts List';
 import Filter from './Filter';
-import data from '../data/data';
 
 export class App extends Component {
   state = {
-    contacts: [...data],
+    contacts: [],
     filter: '',
   };
 
@@ -50,6 +49,21 @@ export class App extends Component {
       contact.name.toLowerCase().includes(this.state.filter)
     );
   };
+
+  componentDidMount() {
+    const parseDataFromLocalStorage = localStorage.getItem('contacts')
+      ? JSON.parse(localStorage.getItem('contacts'))
+      : [];
+
+    if (localStorage.getItem('contacts')) {
+      this.setState({ contacts: parseDataFromLocalStorage });
+    }
+  }
+
+  componentDidUpdate() {
+    const stringifyState = JSON.stringify(this.state.contacts);
+    localStorage.setItem('contacts', stringifyState);
+  }
 
   render() {
     const visibleContacts = this.getVisibleContacts();
